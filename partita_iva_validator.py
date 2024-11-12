@@ -50,7 +50,8 @@ st.title("Partita IVA Validator and VIES Checker")
 
 # Option 1: Upload Excel file
 st.header("Upload an Excel file")
-uploaded_file = st.file_uploader("Upload an Excel file containing 'fornitori.P_IVA__c'", type="xlsx")
+uploaded_file = st.file_uploader("Upload an Excel file containing Partita IVA values", type="xlsx")
+piva_column = st.text_input("Enter the name of the column containing Partita IVA:", "fornitori.P_IVA__c")
 
 # Option 2: Check single VAT number
 st.header("Or, enter a single VAT number")
@@ -81,23 +82,23 @@ if single_vat and st.button("Check Single VAT"):
 if uploaded_file:
     fornitori_raw = pd.read_excel(uploaded_file)
 
-    if 'fornitori.P_IVA__c' not in fornitori_raw.columns:
-        st.error("The uploaded file does not contain the required 'fornitori.P_IVA__c' column.")
+    if piva_column not in fornitori_raw.columns:
+        st.error("The uploaded file does not contain the required '{piva_column}' column.")
     else:
 
-        # Replace NaN values in the 'fornitori.P_IVA__c' column with an empty string instead of dropping them
+        # Replace NaN values in the piva_column column with an empty string instead of dropping them
         fornitori_cleaned = fornitori_raw.copy()
-        fornitori_cleaned['fornitori.P_IVA__c'] = fornitori_cleaned['fornitori.P_IVA__c'].fillna('')
+        fornitori_cleaned[piva_column] = fornitori_cleaned[piva_column].fillna('')
 
-        # Apply the check_partita_iva function to the 'fornitori.P_IVA__c' column and add two new columns
-        fornitori_cleaned[['is_valid_P_IVA', 'starts_with_IT']] = fornitori_cleaned['fornitori.P_IVA__c'].apply(
+        # Apply the check_partita_iva function to the piva_column column and add two new columns
+        fornitori_cleaned[['is_valid_P_IVA', 'starts_with_IT']] = fornitori_cleaned[piva_column].apply(
             lambda x: pd.Series(check_partita_iva(x))
         )
 
         # Separate valid Partita IVA into "MS Code" and "VAT Number" columns
         fornitori_cleaned['MS Code'] = fornitori_cleaned.apply(lambda x: 'IT' if x['is_valid_P_IVA'] else '', axis=1)
         fornitori_cleaned['VAT Number'] = fornitori_cleaned.apply(
-            lambda x: x['fornitori.P_IVA__c'][2:] if x['is_valid_P_IVA'] and x['starts_with_IT'] else x['fornitori.P_IVA__c'],
+            lambda x: x[piva_column][2:] if x['is_valid_P_IVA'] and x['starts_with_IT'] else x[piva_column],
             axis=1
         )
 
