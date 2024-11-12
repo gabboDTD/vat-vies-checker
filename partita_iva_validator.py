@@ -45,6 +45,12 @@ def check_partita_iva(partita_iva: str) -> tuple:
     
     return is_valid, starts_with_IT
 
+# Path to the logo file
+logo_path = "assets/logo/blue-fill-text-right.svg"  # Adjust this path as needed
+
+# Display the logo at the top of the app
+st.image(logo_path, use_container_width=True)  # Automatically scales the logo to fit the app width
+
 # Streamlit App
 st.title("Partita IVA Validator and VIES Checker")
 
