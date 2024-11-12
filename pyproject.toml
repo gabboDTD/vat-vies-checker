@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "vat-vies-checke"
+version = "0.1.0"
+description = ""
+authors = ["gabboDTD <gabriele.spina@teamdigitale.governo.it>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyvieser = "^0.0.4"
+streamlit = "^1.40.1"
+tqdm = "^4.67.0"
+openpyxl = "^3.1.5"
+xlsxwriter = "^3.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
